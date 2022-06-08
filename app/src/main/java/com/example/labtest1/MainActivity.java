@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.google_map1);
         mapFragment.getMapAsync(this);
 
-        polygonSeekbar.setOnSeekBarChangeListener(this);
+        polylineSeekbar.setOnSeekBarChangeListener(this);
         polygonSeekbar.setOnSeekBarChangeListener(this);
     }
 
@@ -100,6 +100,44 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
+            }
+        });
+
+
+
+        googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+
+            @Override
+            public void onMapLongClick(@NonNull LatLng latLng) {
+                for(Marker marker : markerList) {
+                    if(Math.abs(marker.getPosition().latitude - latLng.latitude) < 0.05 && Math.abs(marker.getPosition().longitude - latLng.longitude) < 0.05) {
+                        latLngList.remove(marker.getPosition());
+                        markerList.remove(marker);
+
+                        markerList.clear();
+
+                        marker.remove();
+                        polygon = null;
+                        break;
+                    }
+                }
+            }
+        });
+
+
+        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(@NonNull Marker marker) {
+                Boolean isFound = false;
+                for(Marker marker1 : markerList) {
+                    if (Math.abs(marker1.getPosition().latitude - marker.getPosition().latitude) < 0.05 && Math.abs(marker.getPosition().longitude - marker.getPosition().longitude) < 0.05) {
+                        isFound = true;
+                    }
+                }
+                if (isFound == false) {
+                    marker.remove();
+                }
+                return false;
             }
         });
 
@@ -192,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch (seekBar.getId()){
             case R.id.polyline:
                 if(polygon != null) {
-                    polygon.setStrokeColor(Color.HSVToColor(hsvColor));
+                    polygon.setStrokeColor(Color.HSVToColor(hsvColor1));
                 }
                 break;
             case R.id.polygon:
@@ -200,11 +238,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     polygon.setFillColor(Color.HSVToColor(hsvColor1));
                 }
         }
-//        if(polygon != null)
-//
-//            polygon.setStrokeColor(Color.rgb(Red,Green,Blue));
-//        if(checkBox.isChecked())
-//            polygon.setFillColor(Color.rgb(Red,Green,Blue));
+
     }
 
     @Override
