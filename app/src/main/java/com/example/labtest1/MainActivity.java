@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -106,21 +107,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-
             @Override
-            public void onMapLongClick(@NonNull LatLng latLng) {
-                for(Marker marker : markerList) {
-                    if(Math.abs(marker.getPosition().latitude - latLng.latitude) < 0.05 && Math.abs(marker.getPosition().longitude - latLng.longitude) < 0.05) {
-                        latLngList.remove(marker.getPosition());
-                        markerList.remove(marker);
+            public void onMapLongClick(LatLng latLng) {
+                removeAll();
 
-                        markerList.clear();
 
-                        marker.remove();
-                        polygon = null;
-                        break;
-                    }
-                }
             }
         });
 
@@ -186,6 +177,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             polygon.setStrokeColor(Color.RED);
             polygon.setFillColor(Color.parseColor("#3500FF00"));
         }
+    }
+
+    void removeAll(){
+
+        if(polygon !=null) polygon.remove();
+        for(Marker marker : markerList) marker.remove();
+        markerList.clear();
+        latLngList.clear();
+
+
     }
 
     double calculationByDistance(LatLng StartP, LatLng EndP) {
